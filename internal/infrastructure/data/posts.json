@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "author": "Alice",
+        "content": "Hello, world!"
+    },
+    {
+        "id": 2,
+        "author": "Bob",
+        "content": "GinとNext.js連携テスト"
+    },
+    {
+        "id": 3,
+        "author": "Charlie",
+        "content": "Go言語でAPIを作成しています。"
+    },
+    {
+        "id": 4,
+        "author": "Diana",
+        "content": "JSONファイルからデータを読み込む方法を学んでいます。"
+    }
+]

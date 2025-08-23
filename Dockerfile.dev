@@ -1,0 +1,22 @@
+FROM golang:1.24-alpine
+
+# airのインストール用ツール
+RUN apk add --no-cache git curl
+
+# airインストール
+RUN go install github.com/air-verse/air@latest
+
+WORKDIR /app
+
+# Go Modules 設定
+COPY go.mod go.sum ./
+RUN go mod download
+
+# ソースコードをコピー
+COPY . .
+
+# ポート開放
+EXPOSE 8080
+
+# airでホットリロード実行
+CMD ["air", "-c", ".air.toml"]
