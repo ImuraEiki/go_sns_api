@@ -16,21 +16,43 @@ func main() {
 	// リポジトリ
 	userRepo := infrastructure.NewUserRepository()
 	postRepo := infrastructure.NewPostRepository()
+	commentRepo := infrastructure.NewCommentRepository()
+	followingRepo := infrastructure.NewFollowingRepository()
 
 	// ユースケース
 	userUC := usecase.NewUserUsecase(userRepo)
 	postUC := usecase.NewPostUsecase(postRepo)
+	commentUC := usecase.NewCommentUsecase(commentRepo)
+	followingUC := usecase.NewFollowingUsecase(followingRepo)
 
 	// ハンドラ
 	userHandler := interfaces.NewUserHandler(userUC)
 	postHandler := interfaces.NewPostHandler(postUC)
+	commentHandler := interfaces.NewCommentHandler(commentUC)
+	followingHandler := interfaces.NewFollowingHandler(followingUC)
 
 	// ルーティング
 	// ユーザー関連のエンドポイント
-	r.GET("/api/users", userHandler.GetUsers)
-	r.GET("/api/users/:id", userHandler.GetUserByID)
+	users := r.Group("/api/users")
+	{
+		users.GET("", userHandler.GetUsers)
+		users.GET("/:id", userHandler.GetUserByID)
+	}
 	// 投稿関連のエンドポイント
-	r.GET("/api/posts", postHandler.GetPosts)
-
+	posts := r.Group("/api/posts")
+	{
+		posts.GET("", postHandler.GetPosts)
+	}
+	// コメント関連のエンドポイント
+	comments := r.Group("/api/comments")
+	{
+		comments.GET("", commentHandler.GetComments)
+	}
+	// フォロー関連のエンドポイント
+	followings := r.Group("/api/followings")
+	{
+		followings.GET("", followingHandler.GetFollowings)
+	}
+	// サーバー起動
 	r.Run(":8080")
 }

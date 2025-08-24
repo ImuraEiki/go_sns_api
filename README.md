@@ -16,4 +16,4 @@ docker run -p 8080:8080 my-gin-app
 docker-compose up --build
 (no required module provides package github.com/gin-contrib/corsと出たらローカルでgo get github.com/gin-contrib/corsを実行)
 
-http://localhost:8080/ping
+http://localhost:8080/api/users

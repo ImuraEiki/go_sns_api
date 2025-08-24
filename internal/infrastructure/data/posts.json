@@ -1,22 +1,26 @@
 [
     {
         "id": 1,
-        "author": "Alice",
-        "content": "Hello, world!"
+        "content": "Hello, world!",
+        "likes": 10,
+        "userId": 1
     },
     {
         "id": 2,
-        "author": "Bob",
-        "content": "GinとNext.js連携テスト"
+        "content": "GinとNext.js連携テスト",
+        "likes": 5,
+        "userId": 2
     },
     {
         "id": 3,
-        "author": "Charlie",
-        "content": "Go言語でAPIを作成しています。"
+        "content": "Go言語でAPIを作成しています。",
+        "likes": 3,
+        "userId": 3
     },
     {
         "id": 4,
-        "author": "Diana",
-        "content": "JSONファイルからデータを読み込む方法を学んでいます。"
+        "content": "JSONファイルからデータを読み込む方法を学んでいます。",
+        "likes": 2,
+        "userId": 4
     }
 ]
