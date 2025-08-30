@@ -55,3 +55,24 @@ func (r *UserRepository) CreateNewUser(user *domain.User) error {
 	}
 	return nil
 }
+
+func (r *UserRepository) UpdateUser(user *domain.User) error {
+	users, err := r.GetAll()
+	if err != nil {
+		return err
+	}
+	for i, u := range users {
+		if u.ID == user.ID {
+			users[i] = *user
+			break
+		}
+	}
+	data, err := json.Marshal(users)
+	if err != nil {
+		return err
+	}
+	if err := os.WriteFile(r.data, data, 0644); err != nil {
+		return err
+	}
+	return nil
+}

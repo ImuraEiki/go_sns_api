@@ -38,6 +38,7 @@ func main() {
 		users.GET("", userHandler.GetUsers)
 		users.GET("/:id", userHandler.GetUserByID)
 		users.POST("", userHandler.CreateUser)
+		users.PUT("/:id", userHandler.UpdateUser)
 	}
 	// 投稿関連のエンドポイント
 	posts := r.Group("/api/posts")

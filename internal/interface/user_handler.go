@@ -91,3 +91,48 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	}
 	c.JSON(http.StatusCreated, newUser)
 }
+
+func (h *UserHandler) UpdateUser(c *gin.Context) {
+	idParam := c.Param("id")
+	// IDを整数に変換
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	targetUser, err := h.usecase.GetUserByID(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	if targetUser == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	var user struct {
+		Id      int    `json:"id"`
+		Name    string `json:"name"`
+		Email   string `json:"email"`
+		Picture string `json:"picture"`
+	}
+
+	if err := c.ShouldBindJSON(&user); err != nil || targetUser.ID != user.Id {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	updatedUser := &domain.User{
+		ID:      user.Id,
+		Name:    user.Name,
+		Email:   user.Email,
+		Picture: user.Picture,
+	}
+
+	if err := h.usecase.UpdateUser(updatedUser); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, updatedUser)
+}

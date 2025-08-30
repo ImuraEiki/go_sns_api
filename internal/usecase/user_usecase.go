@@ -24,3 +24,7 @@ func (u *UserUsecase) GetUserByID(id int) (*domain.User, error) {
 func (u *UserUsecase) CreateUser(user *domain.User) error {
 	return u.repo.CreateNewUser(user)
 }
+
+func (u *UserUsecase) UpdateUser(user *domain.User) error {
+	return u.repo.UpdateUser(user)
+}
