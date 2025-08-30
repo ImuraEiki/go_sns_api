@@ -28,3 +28,20 @@ func (r *PostRepository) GetAll() ([]domain.Post, error) {
 	}
 	return posts, nil
 }
+
+func (r *PostRepository) CreateNewPost(post *domain.Post) error {
+	// データをファイルに保存する
+	posts, err := r.GetAll()
+	if err != nil {
+		return err
+	}
+	posts = append(posts, *post)
+	data, err := json.Marshal(posts)
+	if err != nil {
+		return err
+	}
+	if err := os.WriteFile(r.data, data, 0644); err != nil {
+		return err
+	}
+	return nil
+}

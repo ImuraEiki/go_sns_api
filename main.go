@@ -42,6 +42,7 @@ func main() {
 	posts := r.Group("/api/posts")
 	{
 		posts.GET("", postHandler.GetPosts)
+		posts.POST("", postHandler.CreatePost)
 	}
 	// コメント関連のエンドポイント
 	comments := r.Group("/api/comments")
