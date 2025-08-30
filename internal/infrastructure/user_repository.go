@@ -39,3 +39,19 @@ func (r *UserRepository) GetByID(id int) (*domain.User, error) {
 	}
 	return nil, nil
 }
+
+func (r *UserRepository) CreateNewUser(user *domain.User) error {
+	users, err := r.GetAll()
+	if err != nil {
+		return err
+	}
+	users = append(users, *user)
+	data, err := json.Marshal(users)
+	if err != nil {
+		return err
+	}
+	if err := os.WriteFile(r.data, data, 0644); err != nil {
+		return err
+	}
+	return nil
+}

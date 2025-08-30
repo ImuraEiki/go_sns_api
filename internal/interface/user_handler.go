@@ -1,6 +1,7 @@
 package interfaces
 
 import (
+	"my-gin-app/internal/domain"
 	"my-gin-app/internal/usecase"
 	"net/http"
 	"strconv"
@@ -44,4 +45,49 @@ func (h *UserHandler) GetUserByID(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, user)
+}
+
+func (h *UserHandler) CreateUser(c *gin.Context) {
+	var user struct {
+		Id      *int   `json:"id"`
+		Name    string `json:"name"`
+		Email   string `json:"email"`
+		Picture string `json:"picture"`
+	}
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	var newUserId int
+	if user.Id == nil {
+		users, err := h.usecase.GetAllUsers()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		maxId := 0
+		for _, u := range users {
+			if u.ID > maxId {
+				maxId = u.ID
+			}
+		}
+		newUserId = maxId + 1
+	} else {
+		newUserId = *user.Id
+	}
+
+	newUser := &domain.User{
+		ID:      newUserId,
+		Name:    user.Name,
+		Email:   user.Email,
+		Picture: user.Picture,
+	}
+	if user.Id != nil {
+		newUser.ID = *user.Id
+	}
+	if err := h.usecase.CreateUser(newUser); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, newUser)
 }

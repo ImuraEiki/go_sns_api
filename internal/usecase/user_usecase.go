@@ -20,3 +20,7 @@ func (u *UserUsecase) GetAllUsers() ([]domain.User, error) {
 func (u *UserUsecase) GetUserByID(id int) (*domain.User, error) {
 	return u.repo.GetByID(id)
 }
+
+func (u *UserUsecase) CreateUser(user *domain.User) error {
+	return u.repo.CreateNewUser(user)
+}
