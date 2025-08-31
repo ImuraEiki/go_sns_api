@@ -50,6 +50,7 @@ func main() {
 	comments := r.Group("/api/comments")
 	{
 		comments.GET("", commentHandler.GetComments)
+		comments.POST("", commentHandler.CreateComment)
 	}
 	// フォロー関連のエンドポイント
 	followings := r.Group("/api/followings")

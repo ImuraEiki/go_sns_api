@@ -25,3 +25,19 @@ func (r *CommentRepository) GetAll() ([]domain.Comment, error) {
 	}
 	return comments, nil
 }
+
+func (r *CommentRepository) CreateNewComment(comment *domain.Comment) error {
+	comments, err := r.GetAll()
+	if err != nil {
+		return err
+	}
+	comments = append(comments, *comment)
+	data, err := json.Marshal(comments)
+	if err != nil {
+		return err
+	}
+	if err := os.WriteFile(r.data, data, 0644); err != nil {
+		return err
+	}
+	return nil
+}

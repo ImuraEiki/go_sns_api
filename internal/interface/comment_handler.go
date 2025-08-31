@@ -1,6 +1,7 @@
 package interfaces
 
 import (
+	"my-gin-app/internal/domain"
 	"my-gin-app/internal/usecase"
 	"net/http"
 
@@ -22,4 +23,18 @@ func (h *CommentHandler) GetComments(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, comments)
+}
+
+func (h *CommentHandler) CreateComment(c *gin.Context) {
+	var comment domain.Comment
+	if err := c.ShouldBindJSON(&comment); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := h.usecase.CreateComment(&comment); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, gin.H{"message": "Comment created successfully"})
 }
