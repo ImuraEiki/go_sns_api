@@ -36,7 +36,7 @@ func main() {
 	users := r.Group("/api/users")
 	{
 		users.GET("", userHandler.GetUsers)
-		users.GET("/:id", userHandler.GetUserByID)
+		users.GET("/:id", userHandler.GetUserById)
 		users.POST("", userHandler.CreateUser)
 		users.PUT("/:id", userHandler.UpdateUser)
 	}

@@ -2,8 +2,8 @@ package domain
 
 type Post struct {
 	// 後でDBに変更する場合はjsonタグを変更
-	ID      int    `json:"id"`
+	Id      int    `json:"id"`
 	Content string `json:"content"`
 	Likes   int    `json:"likes"`
-	UserID  int    `json:"userId"`
+	UserId  int    `json:"userId"`
 }

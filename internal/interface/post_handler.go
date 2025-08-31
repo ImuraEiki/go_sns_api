@@ -28,46 +28,17 @@ func (h *PostHandler) GetPosts(c *gin.Context) {
 }
 
 func (h *PostHandler) CreatePost(c *gin.Context) {
-	var post struct {
-		Id      *int   `json:"id"`
-		Content string `json:"content"`
-		Likes   int    `json:"likes"`
-		UserID  int    `json:"userId"`
-	}
+	var post domain.Post
+
 	if err := c.ShouldBindJSON(&post); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	var newPostId int
-	if post.Id == nil {
-		posts, err := h.usecase.GetAllPosts()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-		maxId := 0
-		for _, p := range posts {
-			if p.ID > maxId {
-				maxId = p.ID
-			}
-		}
-		newPostId = maxId + 1
-	} else {
-		newPostId = *post.Id
-	}
 
-	newPost := &domain.Post{
-		ID:      newPostId,
-		Content: post.Content,
-		Likes:   post.Likes,
-		UserID:  post.UserID,
-	}
-	if post.Id != nil {
-		newPost.ID = *post.Id
-	}
-	if err := h.usecase.CreatePost(newPost); err != nil {
+	if err := h.usecase.CreatePost(&post); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated, newPost)
+
+	c.JSON(http.StatusCreated, gin.H{"message": "Post created successfully"})
 }

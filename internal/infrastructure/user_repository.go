@@ -27,13 +27,13 @@ func (r *UserRepository) GetAll() ([]domain.User, error) {
 	return users, nil
 }
 
-func (r *UserRepository) GetByID(id int) (*domain.User, error) {
+func (r *UserRepository) GetById(id int) (*domain.User, error) {
 	users, err := r.GetAll()
 	if err != nil {
 		return nil, err
 	}
 	for _, user := range users {
-		if user.ID == id {
+		if user.Id == id {
 			return &user, nil
 		}
 	}
@@ -62,7 +62,7 @@ func (r *UserRepository) UpdateUser(user *domain.User) error {
 		return err
 	}
 	for i, u := range users {
-		if u.ID == user.ID {
+		if u.Id == user.Id {
 			users[i] = *user
 			break
 		}
