@@ -1,4 +1,6 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 tmp/build-errors.log
 tmp/main
+internal/infrastructure/data/posts.json
+internal/infrastructure/data/users.json
+
+# git rm --cached FILENAME
