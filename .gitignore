@@ -2,5 +2,7 @@ tmp/build-errors.log
 tmp/main
 internal/infrastructure/data/posts.json
 internal/infrastructure/data/users.json
+internal/infrastructure/data/comments.json
+internal/infrastructure/data/followings.json
 
 # git rm --cached FILENAME
