@@ -1,6 +1,7 @@
 package interfaces
 
 import (
+	"my-gin-app/internal/domain"
 	"my-gin-app/internal/usecase"
 	"net/http"
 
@@ -16,10 +17,38 @@ func NewFollowingHandler(u *usecase.FollowingUsecase) *FollowingHandler {
 }
 
 func (h *FollowingHandler) GetFollowings(c *gin.Context) {
-	comments, err := h.usecase.GetAllFollowings()
+	followings, err := h.usecase.GetAllFollowings()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, comments)
+	c.JSON(http.StatusOK, followings)
+}
+
+func (h *FollowingHandler) CreateFollowing(c *gin.Context) {
+	var following domain.Following
+	if err := c.ShouldBindJSON(&following); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := h.usecase.CreateFollowing(&following); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, gin.H{"message": "Following created successfully"})
+}
+
+func (h *FollowingHandler) DeleteFollowing(c *gin.Context) {
+	var following domain.Following
+	if err := c.ShouldBindJSON(&following); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := h.usecase.DeleteFollowing(following.Id); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, gin.H{"message": "Following deleted successfully"})
 }

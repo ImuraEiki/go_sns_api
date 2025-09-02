@@ -56,6 +56,8 @@ func main() {
 	followings := r.Group("/api/followings")
 	{
 		followings.GET("", followingHandler.GetFollowings)
+		followings.POST("", followingHandler.CreateFollowing)
+		followings.DELETE("", followingHandler.DeleteFollowing)
 	}
 	// サーバー起動
 	r.Run(":8080")
