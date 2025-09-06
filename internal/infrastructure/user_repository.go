@@ -27,15 +27,52 @@ func (r *UserRepository) GetAll() ([]domain.User, error) {
 	return users, nil
 }
 
-func (r *UserRepository) GetByID(id int) (*domain.User, error) {
+func (r *UserRepository) GetById(id int) (*domain.User, error) {
 	users, err := r.GetAll()
 	if err != nil {
 		return nil, err
 	}
 	for _, user := range users {
-		if user.ID == id {
+		if user.Id == id {
 			return &user, nil
 		}
 	}
 	return nil, nil
+}
+
+func (r *UserRepository) CreateNewUser(user *domain.User) error {
+	users, err := r.GetAll()
+	if err != nil {
+		return err
+	}
+	users = append(users, *user)
+	data, err := json.Marshal(users)
+	if err != nil {
+		return err
+	}
+	if err := os.WriteFile(r.data, data, 0644); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *UserRepository) UpdateUser(user *domain.User) error {
+	users, err := r.GetAll()
+	if err != nil {
+		return err
+	}
+	for i, u := range users {
+		if u.Id == user.Id {
+			users[i] = *user
+			break
+		}
+	}
+	data, err := json.Marshal(users)
+	if err != nil {
+		return err
+	}
+	if err := os.WriteFile(r.data, data, 0644); err != nil {
+		return err
+	}
+	return nil
 }

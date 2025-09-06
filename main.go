@@ -36,22 +36,28 @@ func main() {
 	users := r.Group("/api/users")
 	{
 		users.GET("", userHandler.GetUsers)
-		users.GET("/:id", userHandler.GetUserByID)
+		users.GET("/:id", userHandler.GetUserById)
+		users.POST("", userHandler.CreateUser)
+		users.PUT("/:id", userHandler.UpdateUser)
 	}
 	// 投稿関連のエンドポイント
 	posts := r.Group("/api/posts")
 	{
 		posts.GET("", postHandler.GetPosts)
+		posts.POST("", postHandler.CreatePost)
 	}
 	// コメント関連のエンドポイント
 	comments := r.Group("/api/comments")
 	{
 		comments.GET("", commentHandler.GetComments)
+		comments.POST("", commentHandler.CreateComment)
 	}
 	// フォロー関連のエンドポイント
 	followings := r.Group("/api/followings")
 	{
 		followings.GET("", followingHandler.GetFollowings)
+		followings.POST("", followingHandler.CreateFollowing)
+		followings.DELETE("", followingHandler.DeleteFollowing)
 	}
 	// サーバー起動
 	r.Run(":8080")

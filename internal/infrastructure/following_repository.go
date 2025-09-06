@@ -25,3 +25,30 @@ func (r *FollowingRepository) GetAll() ([]domain.Following, error) {
 	}
 	return followings, nil
 }
+
+func (r *FollowingRepository) CreateNewFollowing(following *domain.Following) error {
+	followings, err := r.GetAll()
+	if err != nil {
+		return err
+	}
+	followings = append(followings, *following)
+	data, err := json.Marshal(followings)
+	if err != nil {
+		return err
+	}
+	if err := os.WriteFile(r.data, data, 0644); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *FollowingRepository) DeleteFollowing(followings []domain.Following) error {
+	data, err := json.Marshal(followings)
+	if err != nil {
+		return err
+	}
+	if err := os.WriteFile(r.data, data, 0644); err != nil {
+		return err
+	}
+	return nil
+}

@@ -1,6 +1,7 @@
 package interfaces
 
 import (
+	"my-gin-app/internal/domain"
 	"my-gin-app/internal/usecase"
 	"net/http"
 	"strconv"
@@ -25,23 +26,54 @@ func (h *UserHandler) GetUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
-func (h *UserHandler) GetUserByID(c *gin.Context) {
+func (h *UserHandler) GetUserById(c *gin.Context) {
 	idParam := c.Param("id")
-	// IDを整数に変換
+	// Idを整数に変換
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user Id"})
 		return
 	}
 
-	user, err := h.usecase.GetUserByID(id)
+	user, err := h.usecase.GetUserById(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	if user == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+	c.JSON(http.StatusOK, user)
+}
+
+func (h *UserHandler) CreateUser(c *gin.Context) {
+	var user domain.User
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, user)
+	if err := h.usecase.CreateUser(&user); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, gin.H{"message": "User created successfully"})
+}
+
+func (h *UserHandler) UpdateUser(c *gin.Context) {
+	var user domain.User
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	idParam := c.Param("id")
+	// Idを整数に変換
+	id, err := strconv.Atoi(idParam)
+	if err != nil || user.Id != id {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user Id"})
+		return
+	}
+
+	if err := h.usecase.UpdateUser(&user); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
 }

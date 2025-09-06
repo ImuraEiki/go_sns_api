@@ -14,6 +14,8 @@ docker run -p 8080:8080 my-gin-app
 
 ### 開発用コンテナの場合
 docker-compose up --build
-(no required module provides package github.com/gin-contrib/corsと出たらローカルでgo get github.com/gin-contrib/corsを実行)
-
 http://localhost:8080/api/users
+
+#### Tips
+- `no required module provides package github.com/gin-contrib/cors`と出たらローカルで`go get github.com/gin-contrib/cors`を実行
+- `error obtaining VCS status`と出たら`git config --global --add safe.directory /home/eiki/workspace/go_api(作業ディレクトリ)`
