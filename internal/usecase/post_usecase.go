@@ -20,21 +20,17 @@ func (u *PostUsecase) GetAllPosts() ([]domain.Post, error) {
 
 func (u *PostUsecase) CreatePost(post *domain.Post) error {
 	var newPostId int
-	if post.Id == 0 {
-		posts, err := u.repo.GetAll()
-		if err != nil {
-			return err
-		}
-		var maxId int
-		for _, p := range posts {
-			if p.Id > maxId {
-				maxId = p.Id
-			}
-		}
-		newPostId = maxId + 1
-	} else {
-		newPostId = post.Id
+	posts, err := u.repo.GetAll()
+	if err != nil {
+		return err
 	}
+	var maxId int
+	for _, p := range posts {
+		if p.Id > maxId {
+			maxId = p.Id
+		}
+	}
+	newPostId = maxId + 1
 
 	newPost := &domain.Post{
 		Id:      newPostId,

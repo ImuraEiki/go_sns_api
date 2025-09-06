@@ -20,21 +20,17 @@ func (u *CommentUsecase) GetAllComments() ([]domain.Comment, error) {
 
 func (u *CommentUsecase) CreateComment(comment *domain.Comment) error {
 	var newCommentId int
-	if comment.Id == 0 {
-		comments, err := u.repo.GetAll()
-		if err != nil {
-			return err
-		}
-		maxId := 0
-		for _, cm := range comments {
-			if cm.Id > maxId {
-				maxId = cm.Id
-			}
-		}
-		newCommentId = maxId + 1
-	} else {
-		newCommentId = comment.Id
+	comments, err := u.repo.GetAll()
+	if err != nil {
+		return err
 	}
+	maxId := 0
+	for _, cm := range comments {
+		if cm.Id > maxId {
+			maxId = cm.Id
+		}
+	}
+	newCommentId = maxId + 1
 
 	newComment := &domain.Comment{
 		Id:      newCommentId,

@@ -21,21 +21,17 @@ func (u *FollowingUsecase) GetAllFollowings() ([]domain.Following, error) {
 
 func (u *FollowingUsecase) CreateFollowing(following *domain.Following) error {
 	var newFollowingId int
-	if following.Id == 0 {
-		followings, err := u.repo.GetAll()
-		if err != nil {
-			return err
-		}
-		maxId := 0
-		for _, cm := range followings {
-			if cm.Id > maxId {
-				maxId = cm.Id
-			}
-		}
-		newFollowingId = maxId + 1
-	} else {
-		newFollowingId = following.Id
+	followings, err := u.repo.GetAll()
+	if err != nil {
+		return err
 	}
+	maxId := 0
+	for _, cm := range followings {
+		if cm.Id > maxId {
+			maxId = cm.Id
+		}
+	}
+	newFollowingId = maxId + 1
 
 	newFollowing := &domain.Following{
 		Id:         newFollowingId,

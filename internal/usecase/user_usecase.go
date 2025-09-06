@@ -28,21 +28,17 @@ func (u *UserUsecase) GetUserById(id int) (*domain.User, error) {
 
 func (u *UserUsecase) CreateUser(user *domain.User) error {
 	var newUserId int
-	if user.Id == 0 {
-		users, err := u.repo.GetAll()
-		if err != nil {
-			return err
-		}
-		var maxId int
-		for _, u := range users {
-			if u.Id > maxId {
-				maxId = u.Id
-			}
-		}
-		newUserId = maxId + 1
-	} else {
-		newUserId = user.Id
+	users, err := u.repo.GetAll()
+	if err != nil {
+		return err
 	}
+	var maxId int
+	for _, u := range users {
+		if u.Id > maxId {
+			maxId = u.Id
+		}
+	}
+	newUserId = maxId + 1
 
 	newUser := &domain.User{
 		Id:      newUserId,
