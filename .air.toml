@@ -3,9 +3,9 @@ root = "."
 tmp_dir = "tmp"
 
 [build]
-cmd = "go build -o ./tmp/main ."
+cmd = "go build -gcflags=\"all=-N -l\" -o ./tmp/main ."
 bin = "tmp/main"
-full_bin = ""
+full_bin = "dlv --headless=true --listen=:2345 --api-version=2 --accept-multiclient exec --continue ./tmp/main"
 include_ext = ["go"]
 exclude_dir = ["tmp", "vendor"]
 exclude_file = []
