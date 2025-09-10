@@ -6,6 +6,7 @@ import (
 
 	"my-gin-app/internal/infrastructure"
 	interfaces "my-gin-app/internal/interface"
+	"my-gin-app/internal/middleware"
 	"my-gin-app/internal/usecase"
 )
 
@@ -33,12 +34,13 @@ func main() {
 
 	// ルーティング
 	// ユーザー関連のエンドポイント
-	users := r.Group("/api/users")
+	auth := r.Group("/api")
+	auth.Use(middleware.AuthMiddleware())
 	{
-		users.GET("", userHandler.GetUsers)
-		users.GET("/:id", userHandler.GetUserById)
-		users.POST("", userHandler.CreateUser)
-		users.PUT("/:id", userHandler.UpdateUser)
+		auth.GET("/users", userHandler.GetUsers)
+		auth.GET("/users/:id", userHandler.GetUserById)
+		auth.POST("/users", userHandler.CreateUser)
+		auth.PUT("/users/:id", userHandler.UpdateUser)
 	}
 	// 投稿関連のエンドポイント
 	posts := r.Group("/api/posts")

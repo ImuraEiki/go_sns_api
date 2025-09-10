@@ -10,3 +10,6 @@ services:
     volumes:
       - .:/app
     command: air -c .air.toml
+    environment:
+      - AUTH0_DOMAIN=${AUTH0_DOMAIN}
+      - AUTH0_AUDIENCE=${AUTH0_AUDIENCE}

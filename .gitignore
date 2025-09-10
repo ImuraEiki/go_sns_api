@@ -4,5 +4,7 @@ internal/infrastructure/data/posts.json
 internal/infrastructure/data/users.json
 internal/infrastructure/data/comments.json
 internal/infrastructure/data/followings.json
+.env
 
+# ignoreが効かないときのコマンド
 # git rm --cached FILENAME
