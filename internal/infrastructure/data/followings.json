@@ -1,0 +1,17 @@
+[
+    {
+      "id": 1,
+      "follow_id": 501,
+      "followed_id": 502
+    },
+    {
+      "id": 2,
+      "follow_id": 502,
+      "followed_id": 501
+    },
+    {
+      "id": 3,
+      "follow_id": 6,
+      "followed_id": 501
+    }
+]

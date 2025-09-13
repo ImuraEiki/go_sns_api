@@ -29,8 +29,20 @@ func (r *PostRepository) GetAll() ([]domain.Post, error) {
 	return posts, nil
 }
 
+func (r *PostRepository) GetById(id int) (*domain.Post, error) {
+	posts, err := r.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	for _, post := range posts {
+		if post.Id == id {
+			return &post, nil
+		}
+	}
+	return nil, nil
+}
+
 func (r *PostRepository) CreateNewPost(post *domain.Post) error {
-	// データをファイルに保存する
 	posts, err := r.GetAll()
 	if err != nil {
 		return err
@@ -44,4 +56,26 @@ func (r *PostRepository) CreateNewPost(post *domain.Post) error {
 		return err
 	}
 	return nil
+}
+
+func (r *PostRepository) LikePost(targetPostId int) (*domain.Post, error) {
+	posts, err := r.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	for _, post := range posts {
+		// likesの部分のみ更新
+		if post.Id == targetPostId {
+			posts[targetPostId-1].Likes++
+			break
+		}
+	}
+	data, err := json.Marshal(posts)
+	if err != nil {
+		return nil, err
+	}
+	if err := os.WriteFile(r.data, data, 0644); err != nil {
+		return nil, err
+	}
+	return &posts[targetPostId-1], nil
 }
