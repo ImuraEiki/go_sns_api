@@ -4,6 +4,7 @@ import (
 	"my-gin-app/internal/domain"
 	"my-gin-app/internal/usecase"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,6 +28,23 @@ func (h *PostHandler) GetPosts(c *gin.Context) {
 	c.JSON(http.StatusOK, posts)
 }
 
+func (h *PostHandler) GetPostById(c *gin.Context) {
+	idParam := c.Param("id")
+	// Idを整数に変換
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid post Id"})
+		return
+	}
+
+	post, err := h.usecase.GetPostById(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, post)
+}
+
 func (h *PostHandler) CreatePost(c *gin.Context) {
 	var post domain.Post
 
@@ -41,4 +59,21 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "Post created successfully"})
+}
+
+func (h *PostHandler) LikePost(c *gin.Context) {
+	idParam := c.Param("id")
+	// Idを整数に変換
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid post Id"})
+		return
+	}
+
+	post, err := h.usecase.LikePost(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, post)
 }

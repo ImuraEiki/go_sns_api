@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"my-gin-app/internal/domain"
 	"my-gin-app/internal/infrastructure"
 )
@@ -16,6 +17,14 @@ func NewPostUsecase(r *infrastructure.PostRepository) *PostUsecase {
 
 func (u *PostUsecase) GetAllPosts() ([]domain.Post, error) {
 	return u.repo.GetAll()
+}
+
+func (u *PostUsecase) GetPostById(id int) (*domain.Post, error) {
+	post, err := u.repo.GetById(id)
+	if post == nil || err != nil {
+		return nil, errors.New("post not found")
+	}
+	return u.repo.GetById(id)
 }
 
 func (u *PostUsecase) CreatePost(post *domain.Post) error {
@@ -35,8 +44,16 @@ func (u *PostUsecase) CreatePost(post *domain.Post) error {
 	newPost := &domain.Post{
 		Id:      newPostId,
 		Content: post.Content,
-		Likes:   post.Likes,
+		Likes:   0,
 		UserId:  post.UserId,
 	}
 	return u.repo.CreateNewPost(newPost)
+}
+
+func (u *PostUsecase) LikePost(targetPostId int) (*domain.Post, error) {
+	post, err := u.repo.GetById(targetPostId)
+	if post == nil || err != nil {
+		return nil, errors.New("post not found")
+	}
+	return u.repo.LikePost(targetPostId)
 }

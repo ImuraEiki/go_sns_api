@@ -46,7 +46,9 @@ func main() {
 	posts := r.Group("/api/posts")
 	{
 		posts.GET("", postHandler.GetPosts)
+		posts.GET("/:id", postHandler.GetPostById)
 		posts.POST("", postHandler.CreatePost)
+		posts.PUT("/likes/:id", postHandler.LikePost)
 	}
 	// コメント関連のエンドポイント
 	comments := r.Group("/api/comments")
