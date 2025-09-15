@@ -54,6 +54,7 @@ func main() {
 	comments := r.Group("/api/comments")
 	{
 		comments.GET("", commentHandler.GetComments)
+		comments.GET("/posts/:id", commentHandler.GetCommentsByPostId)
 		comments.POST("", commentHandler.CreateComment)
 	}
 	// フォロー関連のエンドポイント
