@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"my-gin-app/internal/domain"
 	"my-gin-app/internal/infrastructure"
 )
@@ -16,6 +17,14 @@ func NewCommentUsecase(r *infrastructure.CommentRepository) *CommentUsecase {
 
 func (u *CommentUsecase) GetAllComments() ([]domain.Comment, error) {
 	return u.repo.GetAll()
+}
+
+func (u *CommentUsecase) GetCommentsByPostId(postId int) ([]domain.Comment, error) {
+	comments, err := u.repo.GetCommentsByPostId(postId)
+	if comments == nil || err != nil {
+		return nil, errors.New("comment not found")
+	}
+	return comments, nil
 }
 
 func (u *CommentUsecase) CreateComment(comment *domain.Comment) error {

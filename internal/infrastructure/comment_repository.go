@@ -26,6 +26,25 @@ func (r *CommentRepository) GetAll() ([]domain.Comment, error) {
 	return comments, nil
 }
 
+func (r *CommentRepository) GetCommentsByPostId(postId int) ([]domain.Comment, error) {
+	data, err := os.ReadFile(r.data)
+	if err != nil {
+		return nil, err
+	}
+	var comments []domain.Comment
+	if err := json.Unmarshal(data, &comments); err != nil {
+		return nil, err
+	}
+	// TODO: DBから取得する。
+	var filteredComments []domain.Comment
+	for _, comment := range comments {
+		if comment.PostId == postId {
+			filteredComments = append(filteredComments, comment)
+		}
+	}
+	return filteredComments, nil
+}
+
 func (r *CommentRepository) CreateNewComment(comment *domain.Comment) error {
 	comments, err := r.GetAll()
 	if err != nil {
