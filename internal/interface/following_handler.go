@@ -31,12 +31,12 @@ func (h *FollowingHandler) CreateFollowing(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	if err := h.usecase.CreateFollowing(&following); err != nil {
+	newFollowing, err := h.usecase.CreateFollowing(&following)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{"message": "Following created successfully"})
+	c.JSON(http.StatusCreated, newFollowing)
 }
 
 func (h *FollowingHandler) DeleteFollowing(c *gin.Context) {

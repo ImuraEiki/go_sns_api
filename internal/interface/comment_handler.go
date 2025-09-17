@@ -49,10 +49,11 @@ func (h *CommentHandler) CreateComment(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	if err := h.usecase.CreateComment(&comment); err != nil {
+	var newComment *domain.Comment
+	newComment, err := h.usecase.CreateComment(&comment)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{"message": "Comment created successfully"})
+	c.JSON(http.StatusCreated, newComment)
 }
