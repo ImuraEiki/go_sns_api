@@ -34,6 +34,13 @@ func (u *FollowingUsecase) CreateFollowing(following *domain.Following) (*domain
 	if following.FollowedUserId == 0 {
 		return nil, errors.New("FollowedUserId is required")
 	}
+	// 重複チェック
+	followings, _ := u.repo.GetAll()
+	for _, val := range followings {
+		if val.FollowUserId == following.FollowUserId && val.FollowedUserId == following.FollowedUserId {
+			return nil, errors.New("already exists")
+		}
+	}
 	return u.repo.CreateNewFollowing(following)
 }
 

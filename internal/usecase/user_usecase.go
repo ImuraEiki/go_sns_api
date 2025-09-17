@@ -33,6 +33,13 @@ func (u *UserUsecase) CreateUser(user *domain.User) (*domain.User, error) {
 	if user.Email == "" {
 		return nil, errors.New("userEmail is required")
 	}
+	// 重複チェック
+	users, _ := u.repo.GetAll()
+	for _, val := range users {
+		if val.Name == user.Name && val.Email == user.Email {
+			return nil, errors.New("already exists")
+		}
+	}
 	return u.repo.CreateNewUser(user)
 }
 
