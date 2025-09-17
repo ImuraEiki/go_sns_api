@@ -61,6 +61,7 @@ func main() {
 	followings := r.Group("/api/followings")
 	{
 		followings.GET("", followingHandler.GetFollowings)
+		followings.GET("/user/:id", followingHandler.GetFollowingsByUserId)
 		followings.POST("", followingHandler.CreateFollowing)
 		followings.DELETE("", followingHandler.DeleteFollowing)
 	}

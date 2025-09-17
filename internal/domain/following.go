@@ -1,7 +1,7 @@
 package domain
 
 type Following struct {
-	Id         int `json:"id"`
-	FollowId   int `json:"follow_id"`   // フォローする側のユーザーID
-	FollowedId int `json:"followed_id"` // フォローされる側のユーザーID
+	Id             int `json:"id"`
+	FollowUserId   int `json:"followUserId"`   // フォローする側のユーザーID
+	FollowedUserId int `json:"followedUserId"` // フォローされる側のユーザーID
 }

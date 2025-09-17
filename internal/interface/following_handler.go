@@ -4,6 +4,7 @@ import (
 	"my-gin-app/internal/domain"
 	"my-gin-app/internal/usecase"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,6 +19,23 @@ func NewFollowingHandler(u *usecase.FollowingUsecase) *FollowingHandler {
 
 func (h *FollowingHandler) GetFollowings(c *gin.Context) {
 	followings, err := h.usecase.GetAllFollowings()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, followings)
+}
+
+func (h *FollowingHandler) GetFollowingsByUserId(c *gin.Context) {
+	idParam := c.Param("id")
+	// Idを整数に変換
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user Id"})
+		return
+	}
+
+	followings, err := h.usecase.GetFollowingsByUserId(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
