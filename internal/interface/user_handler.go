@@ -49,11 +49,12 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if err := h.usecase.CreateUser(&user); err != nil {
+	newUser, err := h.usecase.CreateUser(&user)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{"message": "User created successfully"})
+	c.JSON(http.StatusCreated, newUser)
 }
 
 func (h *UserHandler) UpdateUser(c *gin.Context) {

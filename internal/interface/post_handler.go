@@ -53,12 +53,13 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 		return
 	}
 
-	if err := h.usecase.CreatePost(&post); err != nil {
+	newPost, err := h.usecase.CreatePost(&post)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Post created successfully"})
+	c.JSON(http.StatusCreated, newPost)
 }
 
 func (h *PostHandler) LikePost(c *gin.Context) {

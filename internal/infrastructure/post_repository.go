@@ -42,20 +42,35 @@ func (r *PostRepository) GetById(id int) (*domain.Post, error) {
 	return nil, nil
 }
 
-func (r *PostRepository) CreateNewPost(post *domain.Post) error {
+func (r *PostRepository) CreateNewPost(post *domain.Post) (*domain.Post, error) {
+	var newPostId int
 	posts, err := r.GetAll()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	posts = append(posts, *post)
+	var maxId int
+	for _, p := range posts {
+		if p.Id > maxId {
+			maxId = p.Id
+		}
+	}
+	newPostId = maxId + 1
+
+	newPost := &domain.Post{
+		Id:      newPostId,
+		Content: post.Content,
+		Likes:   0,
+		UserId:  post.UserId,
+	}
+	posts = append(posts, *newPost)
 	data, err := json.Marshal(posts)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if err := os.WriteFile(r.data, data, 0644); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return newPost, nil
 }
 
 func (r *PostRepository) LikePost(targetPostId int) (*domain.Post, error) {

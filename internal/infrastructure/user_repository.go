@@ -40,20 +40,36 @@ func (r *UserRepository) GetById(id int) (*domain.User, error) {
 	return nil, nil
 }
 
-func (r *UserRepository) CreateNewUser(user *domain.User) error {
+func (r *UserRepository) CreateNewUser(user *domain.User) (*domain.User, error) {
+	var newUserId int
 	users, err := r.GetAll()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	users = append(users, *user)
+	// TODO: DBになったらIDはオートインクリメントされるので消す
+	var maxId int
+	for _, u := range users {
+		if u.Id > maxId {
+			maxId = u.Id
+		}
+	}
+	newUserId = maxId + 1
+
+	newUser := &domain.User{
+		Id:      newUserId,
+		Name:    user.Name,
+		Email:   user.Email,
+		Picture: user.Picture,
+	}
+	users = append(users, *newUser)
 	data, err := json.Marshal(users)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if err := os.WriteFile(r.data, data, 0644); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return newUser, nil
 }
 
 func (r *UserRepository) UpdateUser(user *domain.User) error {

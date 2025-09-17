@@ -27,27 +27,14 @@ func (u *PostUsecase) GetPostById(id int) (*domain.Post, error) {
 	return u.repo.GetById(id)
 }
 
-func (u *PostUsecase) CreatePost(post *domain.Post) error {
-	var newPostId int
-	posts, err := u.repo.GetAll()
-	if err != nil {
-		return err
+func (u *PostUsecase) CreatePost(post *domain.Post) (*domain.Post, error) {
+	if post.Content == "" {
+		return nil, errors.New("content is required")
 	}
-	var maxId int
-	for _, p := range posts {
-		if p.Id > maxId {
-			maxId = p.Id
-		}
+	if post.UserId == 0 {
+		return nil, errors.New("userId is required")
 	}
-	newPostId = maxId + 1
-
-	newPost := &domain.Post{
-		Id:      newPostId,
-		Content: post.Content,
-		Likes:   0,
-		UserId:  post.UserId,
-	}
-	return u.repo.CreateNewPost(newPost)
+	return u.repo.CreateNewPost(post)
 }
 
 func (u *PostUsecase) LikePost(targetPostId int) (*domain.Post, error) {
