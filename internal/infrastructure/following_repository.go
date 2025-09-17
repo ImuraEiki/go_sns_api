@@ -26,6 +26,20 @@ func (r *FollowingRepository) GetAll() ([]domain.Following, error) {
 	return followings, nil
 }
 
+func (r *FollowingRepository) GetFollowingsByUserId(userId int) ([]domain.Following, error) {
+	followings, err := r.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	var followingByUserId []domain.Following
+	for _, following := range followings {
+		if following.FollowUserId == userId || following.FollowedUserId == userId {
+			followingByUserId = append(followingByUserId, following)
+		}
+	}
+	return followingByUserId, nil
+}
+
 func (r *FollowingRepository) CreateNewFollowing(following *domain.Following) (*domain.Following, error) {
 	var newFollowingId int
 	followings, err := r.GetAll()
