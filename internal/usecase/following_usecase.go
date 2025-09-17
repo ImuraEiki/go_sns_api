@@ -19,26 +19,22 @@ func (u *FollowingUsecase) GetAllFollowings() ([]domain.Following, error) {
 	return u.repo.GetAll()
 }
 
-func (u *FollowingUsecase) CreateFollowing(following *domain.Following) error {
-	var newFollowingId int
-	followings, err := u.repo.GetAll()
-	if err != nil {
-		return err
+func (u *FollowingUsecase) GetFollowingsByUserId(postId int) ([]domain.Following, error) {
+	followings, err := u.repo.GetFollowingsByUserId(postId)
+	if followings == nil || err != nil {
+		return nil, errors.New("following not found")
 	}
-	maxId := 0
-	for _, cm := range followings {
-		if cm.Id > maxId {
-			maxId = cm.Id
-		}
-	}
-	newFollowingId = maxId + 1
+	return followings, nil
+}
 
-	newFollowing := &domain.Following{
-		Id:         newFollowingId,
-		FollowId:   following.FollowId,
-		FollowedId: following.FollowedId,
+func (u *FollowingUsecase) CreateFollowing(following *domain.Following) (*domain.Following, error) {
+	if following.FollowUserId == 0 {
+		return nil, errors.New("FollowUserId is required")
 	}
-	return u.repo.CreateNewFollowing(newFollowing)
+	if following.FollowedUserId == 0 {
+		return nil, errors.New("FollowedUserId is required")
+	}
+	return u.repo.CreateNewFollowing(following)
 }
 
 func (u *FollowingUsecase) DeleteFollowing(id int) error {

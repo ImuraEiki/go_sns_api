@@ -45,18 +45,33 @@ func (r *CommentRepository) GetCommentsByPostId(postId int) ([]domain.Comment, e
 	return filteredComments, nil
 }
 
-func (r *CommentRepository) CreateNewComment(comment *domain.Comment) error {
+func (r *CommentRepository) CreateNewComment(comment *domain.Comment) (*domain.Comment, error) {
+	var newCommentId int
 	comments, err := r.GetAll()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	comments = append(comments, *comment)
+	maxId := 0
+	for _, cm := range comments {
+		if cm.Id > maxId {
+			maxId = cm.Id
+		}
+	}
+	newCommentId = maxId + 1
+
+	newComment := &domain.Comment{
+		Id:      newCommentId,
+		Content: comment.Content,
+		PostId:  comment.PostId,
+		UserId:  comment.UserId,
+	}
+	comments = append(comments, *newComment)
 	data, err := json.Marshal(comments)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if err := os.WriteFile(r.data, data, 0644); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return newComment, nil
 }

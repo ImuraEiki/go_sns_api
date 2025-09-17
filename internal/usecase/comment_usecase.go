@@ -27,25 +27,15 @@ func (u *CommentUsecase) GetCommentsByPostId(postId int) ([]domain.Comment, erro
 	return comments, nil
 }
 
-func (u *CommentUsecase) CreateComment(comment *domain.Comment) error {
-	var newCommentId int
-	comments, err := u.repo.GetAll()
-	if err != nil {
-		return err
+func (u *CommentUsecase) CreateComment(comment *domain.Comment) (*domain.Comment, error) {
+	if comment.Content == "" {
+		return nil, errors.New(("content is required"))
 	}
-	maxId := 0
-	for _, cm := range comments {
-		if cm.Id > maxId {
-			maxId = cm.Id
-		}
+	if comment.PostId == 0 {
+		return nil, errors.New(("postId is required"))
 	}
-	newCommentId = maxId + 1
-
-	newComment := &domain.Comment{
-		Id:      newCommentId,
-		Content: comment.Content,
-		PostId:  comment.PostId,
-		UserId:  comment.UserId,
+	if comment.UserId == 0 {
+		return nil, errors.New(("userId is required"))
 	}
-	return u.repo.CreateNewComment(newComment)
+	return u.repo.CreateNewComment(comment)
 }
