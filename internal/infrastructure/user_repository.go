@@ -72,10 +72,10 @@ func (r *UserRepository) CreateNewUser(user *domain.User) (*domain.User, error) 
 	return newUser, nil
 }
 
-func (r *UserRepository) UpdateUser(user *domain.User) error {
+func (r *UserRepository) UpdateUserName(user *domain.User) (*domain.User, error) {
 	users, err := r.GetAll()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	for i, u := range users {
 		if u.Id == user.Id {
@@ -85,10 +85,10 @@ func (r *UserRepository) UpdateUser(user *domain.User) error {
 	}
 	data, err := json.Marshal(users)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if err := os.WriteFile(r.data, data, 0644); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return user, nil
 }

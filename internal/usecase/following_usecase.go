@@ -11,6 +11,11 @@ type FollowingUsecase struct {
 	repo *infrastructure.FollowingRepository
 }
 
+type DeleteFollowingResponse struct {
+	Id      int  `json:"id"`
+	Deleted bool `json:"deleted"`
+}
+
 func NewFollowingUsecase(r *infrastructure.FollowingRepository) *FollowingUsecase {
 	return &FollowingUsecase{repo: r}
 }
@@ -19,8 +24,8 @@ func (u *FollowingUsecase) GetAllFollowings() ([]domain.Following, error) {
 	return u.repo.GetAll()
 }
 
-func (u *FollowingUsecase) GetFollowingsByUserId(postId int) ([]domain.Following, error) {
-	followings, err := u.repo.GetFollowingsByUserId(postId)
+func (u *FollowingUsecase) GetFollowingsByUserId(userId int) ([]domain.Following, error) {
+	followings, err := u.repo.GetFollowingsByUserId(userId)
 	if followings == nil || err != nil {
 		return nil, errors.New("following not found")
 	}
@@ -44,13 +49,13 @@ func (u *FollowingUsecase) CreateFollowing(following *domain.Following) (*domain
 	return u.repo.CreateNewFollowing(following)
 }
 
-func (u *FollowingUsecase) DeleteFollowing(id int) error {
+func (u *FollowingUsecase) DeleteFollowing(id int) (*DeleteFollowingResponse, error) {
 	if id == 0 {
-		return errors.New("invalid id")
+		return nil, errors.New("invalid id")
 	}
 	followings, err := u.repo.GetAll()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	var newFollowings []domain.Following
 	for index, following := range followings {
@@ -59,5 +64,17 @@ func (u *FollowingUsecase) DeleteFollowing(id int) error {
 			break
 		}
 	}
-	return u.repo.DeleteFollowing(newFollowings)
+	if len(newFollowings) > 0 {
+		repoErr := u.repo.DeleteFollowing(newFollowings)
+		if repoErr != nil {
+			return nil, err
+		}
+		resp := &DeleteFollowingResponse{
+			Id:      id,
+			Deleted: true,
+		}
+		return resp, nil
+	} else {
+		return nil, errors.New("following id not found")
+	}
 }
