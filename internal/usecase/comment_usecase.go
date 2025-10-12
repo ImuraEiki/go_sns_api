@@ -22,7 +22,7 @@ func (u *CommentUsecase) GetAllComments() ([]domain.Comment, error) {
 func (u *CommentUsecase) GetCommentsByPostId(postId int) ([]domain.Comment, error) {
 	comments, err := u.repo.GetCommentsByPostId(postId)
 	if comments == nil || err != nil {
-		return nil, errors.New("comment not found")
+		return []domain.Comment{}, nil
 	}
 	return comments, nil
 }
