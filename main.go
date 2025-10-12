@@ -47,7 +47,7 @@ func main() {
 		auth.GET("/users", userHandler.GetUsers)
 		auth.GET("/users/:id", userHandler.GetUserById)
 		auth.POST("/users", userHandler.CreateUser)
-		auth.PUT("/users/:id", userHandler.UpdateUser)
+		auth.PUT("/users/:id", userHandler.UpdateUserName)
 	}
 	// 投稿関連のエンドポイント
 	posts := r.Group("/api/posts")

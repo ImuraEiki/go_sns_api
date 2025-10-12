@@ -43,19 +43,23 @@ func (u *UserUsecase) CreateUser(user *domain.User) (*domain.User, error) {
 	return u.repo.CreateNewUser(user)
 }
 
-func (u *UserUsecase) UpdateUser(user *domain.User) error {
+func (u *UserUsecase) UpdateUserName(user *domain.User) (*domain.User, error) {
 
 	targetUser, err := u.repo.GetById(user.Id)
-	if targetUser == nil || err != nil {
-		return errors.New("user not found")
+	if targetUser == nil || err != nil || targetUser.Email != user.Email {
+		return nil, errors.New("user not found")
+	}
+
+	if user.Name == "" {
+		return nil, errors.New("userName is required")
 	}
 
 	updatedUser := &domain.User{
-		Id:      user.Id,
+		Id:      targetUser.Id,
 		Name:    user.Name,
-		Email:   user.Email,
-		Picture: user.Picture,
+		Email:   targetUser.Email,
+		Picture: targetUser.Picture,
 	}
 
-	return u.repo.UpdateUser(updatedUser)
+	return u.repo.UpdateUserName(updatedUser)
 }

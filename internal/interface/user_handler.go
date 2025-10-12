@@ -57,7 +57,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, newUser)
 }
 
-func (h *UserHandler) UpdateUser(c *gin.Context) {
+func (h *UserHandler) UpdateUserName(c *gin.Context) {
 	var user domain.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -72,9 +72,10 @@ func (h *UserHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	if err := h.usecase.UpdateUser(&user); err != nil {
+	updatedUser, err := h.usecase.UpdateUserName(&user)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
+	c.JSON(http.StatusOK, updatedUser)
 }
