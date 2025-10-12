@@ -12,7 +12,14 @@ import (
 
 func main() {
 	r := gin.Default()
-	r.Use(cors.Default())
+	// corsでAuthorizationヘッダーを許可
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 
 	// リポジトリ
 	userRepo := infrastructure.NewUserRepository()
