@@ -64,9 +64,10 @@ func (h *FollowingHandler) DeleteFollowing(c *gin.Context) {
 		return
 	}
 
-	if err := h.usecase.DeleteFollowing(following.Id); err != nil {
+	if resp, err := h.usecase.DeleteFollowing(following.Id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+	} else {
+		c.JSON(http.StatusCreated, resp)
 	}
-	c.JSON(http.StatusCreated, gin.H{"message": "Following deleted successfully"})
 }
