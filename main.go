@@ -21,6 +21,8 @@ func main() {
 	conn.AutoMigrate(&domain.Post{})
 	conn.AutoMigrate(&domain.Comment{})
 	conn.AutoMigrate(&domain.Following{})
+	// seed値投入
+	infrastructure.SeedInitialData(conn)
 	// corsでAuthorizationヘッダーを許可
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
@@ -32,7 +34,7 @@ func main() {
 
 	// リポジトリ
 	userRepo := infrastructure.NewUserRepository()
-	postRepo := infrastructure.NewPostRepository()
+	postRepo := infrastructure.NewPostRepository(conn)
 	commentRepo := infrastructure.NewCommentRepository()
 	followingRepo := infrastructure.NewFollowingRepository()
 
