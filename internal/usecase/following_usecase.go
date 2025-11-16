@@ -57,15 +57,15 @@ func (u *FollowingUsecase) DeleteFollowing(id int) (*DeleteFollowingResponse, er
 	if err != nil {
 		return nil, err
 	}
-	var newFollowings []domain.Following
+	var deleteFollowings []domain.Following
 	for index, following := range followings {
 		if following.Id == id {
-			newFollowings = append(followings[:index], followings[index+1:]...)
+			deleteFollowings = append(deleteFollowings, followings[index])
 			break
 		}
 	}
-	if len(newFollowings) > 0 {
-		repoErr := u.repo.DeleteFollowing(newFollowings)
+	if len(deleteFollowings) > 0 {
+		repoErr := u.repo.DeleteFollowing(id)
 		if repoErr != nil {
 			return nil, err
 		}
