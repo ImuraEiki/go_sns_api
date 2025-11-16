@@ -24,7 +24,7 @@ func (r *CommentRepository) GetAll() ([]domain.Comment, error) {
 
 func (r *CommentRepository) GetCommentsByPostId(postId int) ([]domain.Comment, error) {
 	var comments []domain.Comment
-	if err := r.db.Find(&comments, postId).Error; err != nil {
+	if err := r.db.Where("post_id = ?", postId).Find(&comments).Error; err != nil {
 		return nil, err
 	}
 	return comments, nil
