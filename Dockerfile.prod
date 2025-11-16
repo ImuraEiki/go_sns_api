@@ -14,7 +14,7 @@ RUN go mod download
 COPY . .
 
 # バイナリをビルド（出力ファイル名はapp）
-RUN CGO_ENABLED=0 GOOS=linux go build -o app
+RUN CGO_ENABLED=0 GOOS=linux go build -tags timetzdata -o app
 
 # 2. 実行ステージ
 FROM alpine:latest
