@@ -14,6 +14,13 @@ docker build -f Dockerfile.prod -t my-gin-app .
 
 ### コンテナを起動（ローカルの8080をコンテナの8080にマッピング）
 docker run -p 8080:8080 my-gin-app
+#### ECRにイメージをpush
+```
+aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${USER_ID}.dkr.ecr.${REGION}.amazonaws.com
+docker build -f Dockerfile.prod -t ${REPO_NAME}:${VERSION} .
+docker tag ${REPO_NAME}:${VERSION} ${USER_ID}.dkr.ecr.${REGION}.amazonaws.com/${REPO_NAME}:${VERSION}
+docker push ${USER_ID}.dkr.ecr.${REGION}.amazonaws.com/${REPO_NAME}:${VERSION}
+```
 
 ### 開発用コンテナの場合
 docker-compose up --build

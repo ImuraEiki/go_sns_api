@@ -1,6 +1,7 @@
 tmp/build-errors.log
 tmp/main
 .env
+.env.prod
 
 # ignoreが効かないときのコマンド
 # git rm --cached FILENAME
