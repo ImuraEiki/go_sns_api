@@ -1,81 +1,45 @@
 package infrastructure
 
 import (
-	"encoding/json"
+	"gorm.io/gorm"
+
 	"my-gin-app/internal/domain"
-	"os"
 )
 
 type FollowingRepository struct {
-	data string
+	db *gorm.DB
 }
 
-func NewFollowingRepository() *FollowingRepository {
-	return &FollowingRepository{data: "internal/infrastructure/data/followings.json"}
+func NewFollowingRepository(db *gorm.DB) *FollowingRepository {
+	return &FollowingRepository{db: db}
 }
 
 func (r *FollowingRepository) GetAll() ([]domain.Following, error) {
-	data, err := os.ReadFile(r.data)
-	if err != nil {
-		return nil, err
-	}
 	var followings []domain.Following
-	if err := json.Unmarshal(data, &followings); err != nil {
+	if err := r.db.Find(&followings).Error; err != nil {
 		return nil, err
 	}
 	return followings, nil
 }
 
 func (r *FollowingRepository) GetFollowingsByUserId(userId int) ([]domain.Following, error) {
-	followings, err := r.GetAll()
-	if err != nil {
+	var followings []domain.Following
+	if err := r.db.Where("followed_user_id = ? OR follow_user_id = ?", userId, userId).Find(&followings).Error; err != nil {
 		return nil, err
 	}
-	var followingByUserId []domain.Following
-	for _, following := range followings {
-		if following.FollowUserId == userId || following.FollowedUserId == userId {
-			followingByUserId = append(followingByUserId, following)
-		}
-	}
-	return followingByUserId, nil
+	return followings, nil
 }
 
 func (r *FollowingRepository) CreateNewFollowing(following *domain.Following) (*domain.Following, error) {
-	var newFollowingId int
-	followings, err := r.GetAll()
-	if err != nil {
+	if err := r.db.Create(following).Error; err != nil {
 		return nil, err
 	}
-	maxId := 0
-	for _, cm := range followings {
-		if cm.Id > maxId {
-			maxId = cm.Id
-		}
-	}
-	newFollowingId = maxId + 1
-
-	newFollowing := &domain.Following{
-		Id:             newFollowingId,
-		FollowUserId:   following.FollowUserId,
-		FollowedUserId: following.FollowedUserId,
-	}
-	followings = append(followings, *newFollowing)
-	data, err := json.Marshal(followings)
-	if err != nil {
-		return nil, err
-	}
-	if err := os.WriteFile(r.data, data, 0644); err != nil {
-		return nil, err
-	}
-	return newFollowing, nil
+	return following, nil
 }
 
-func (r *FollowingRepository) DeleteFollowing(followings []domain.Following) error {
-	data, err := json.Marshal(followings)
-	if err != nil {
-		return err
-	}
-	if err := os.WriteFile(r.data, data, 0644); err != nil {
+func (r *FollowingRepository) DeleteFollowing(id int) error {
+	var followings []domain.Following
+	if err := r.db.Delete(&followings, id).Error; err != nil {
 		return err
 	}
 	return nil

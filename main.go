@@ -33,10 +33,10 @@ func main() {
 	}))
 
 	// リポジトリ
-	userRepo := infrastructure.NewUserRepository()
+	userRepo := infrastructure.NewUserRepository(conn)
 	postRepo := infrastructure.NewPostRepository(conn)
-	commentRepo := infrastructure.NewCommentRepository()
-	followingRepo := infrastructure.NewFollowingRepository()
+	commentRepo := infrastructure.NewCommentRepository(conn)
+	followingRepo := infrastructure.NewFollowingRepository(conn)
 
 	// ユースケース
 	userUC := usecase.NewUserUsecase(userRepo)
