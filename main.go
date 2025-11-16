@@ -4,6 +4,8 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
+	"my-gin-app/internal/db"
+	"my-gin-app/internal/domain"
 	"my-gin-app/internal/infrastructure"
 	interfaces "my-gin-app/internal/interface"
 	"my-gin-app/internal/middleware"
@@ -12,6 +14,15 @@ import (
 
 func main() {
 	r := gin.Default()
+	// DB接続
+	conn := db.Connect()
+	// 自動マイグレーション
+	conn.AutoMigrate(&domain.User{})
+	conn.AutoMigrate(&domain.Post{})
+	conn.AutoMigrate(&domain.Comment{})
+	conn.AutoMigrate(&domain.Following{})
+	// seed値投入
+	infrastructure.SeedInitialData(conn)
 	// corsでAuthorizationヘッダーを許可
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
@@ -22,10 +33,10 @@ func main() {
 	}))
 
 	// リポジトリ
-	userRepo := infrastructure.NewUserRepository()
-	postRepo := infrastructure.NewPostRepository()
-	commentRepo := infrastructure.NewCommentRepository()
-	followingRepo := infrastructure.NewFollowingRepository()
+	userRepo := infrastructure.NewUserRepository(conn)
+	postRepo := infrastructure.NewPostRepository(conn)
+	commentRepo := infrastructure.NewCommentRepository(conn)
+	followingRepo := infrastructure.NewFollowingRepository(conn)
 
 	// ユースケース
 	userUC := usecase.NewUserUsecase(userRepo)
