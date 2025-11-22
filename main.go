@@ -83,6 +83,15 @@ func main() {
 		followings.POST("", followingHandler.CreateFollowing)
 		followings.DELETE("", followingHandler.DeleteFollowing)
 	}
+
+	helth := r.Group("/health")
+	{
+		helth.GET("", func(c *gin.Context) {
+			c.JSON(200, gin.H{
+				"status": "OK",
+			})
+		})
+	}
 	// サーバー起動
 	r.Run(":8080")
 }
