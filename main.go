@@ -84,9 +84,9 @@ func main() {
 		followings.DELETE("", followingHandler.DeleteFollowing)
 	}
 
-	helth := r.Group("/health")
+	health := r.Group("/api/health")
 	{
-		helth.GET("", func(c *gin.Context) {
+		health.GET("", func(c *gin.Context) {
 			c.JSON(200, gin.H{
 				"status": "OK",
 			})
