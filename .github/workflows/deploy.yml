@@ -1,0 +1,43 @@
+name: Push image to ECR
+
+on:
+  push:
+    branches: [develop]
+
+env:
+  AWS_REGION: us-east-1
+  BACKEND_REPO: my-go-app
+  ECS_SERVICE: my-go-app-service
+  ECS_CLUSTER: my-cluster
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout # これをするとActions実行環境のルートにリポジトリがクローンされる
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Set image tags
+      id: vars
+      run: echo "TAG=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV # $GITHUB_SHAは最新コミットのハッシュ値
+
+    - name: Build and Push frontend image
+      run: |
+        docker build -f Dockerfile.prod -t $BACKEND_REPO:$TAG .
+        docker images
+        docker tag $BACKEND_REPO:$TAG ${{ steps.login-ecr.outputs.registry }}/$BACKEND_REPO:$TAG
+        docker push ${{ steps.login-ecr.outputs.registry }}/$BACKEND_REPO:$TAG
+
