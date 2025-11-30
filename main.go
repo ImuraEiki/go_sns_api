@@ -52,36 +52,43 @@ func main() {
 
 	// ルーティング
 	// ユーザー関連のエンドポイント
-	auth := r.Group("/backend/users")
-	auth.Use(middleware.AuthMiddleware())
+	users := r.Group("/backend/users")
+	auth_users := r.Group("/backend/users")
+	auth_users.Use(middleware.AuthMiddleware())
 	{
-		auth.GET("", userHandler.GetUsers)
-		auth.GET("/:id", userHandler.GetUserById)
-		auth.POST("", userHandler.CreateUser)
-		auth.PUT("/:id", userHandler.UpdateUserName)
+		users.GET("", userHandler.GetUsers)
+		users.GET("/:id", userHandler.GetUserById)
+		auth_users.POST("", userHandler.CreateUser)
+		auth_users.PUT("/:id", userHandler.UpdateUserName)
 	}
 	// 投稿関連のエンドポイント
 	posts := r.Group("/backend/posts")
+	auth_posts := r.Group("/backend/posts")
+	auth_posts.Use(middleware.AuthMiddleware())
 	{
 		posts.GET("", postHandler.GetPosts)
 		posts.GET("/:id", postHandler.GetPostById)
-		posts.POST("", postHandler.CreatePost)
+		auth_posts.POST("", postHandler.CreatePost)
 		posts.PUT("/likes/:id", postHandler.LikePost)
 	}
 	// コメント関連のエンドポイント
 	comments := r.Group("/backend/comments")
+	auth_comments := r.Group("/backend/comments")
+	auth_comments.Use(middleware.AuthMiddleware())
 	{
 		comments.GET("", commentHandler.GetComments)
 		comments.GET("/posts/:id", commentHandler.GetCommentsByPostId)
-		comments.POST("", commentHandler.CreateComment)
+		auth_comments.POST("", commentHandler.CreateComment)
 	}
 	// フォロー関連のエンドポイント
 	followings := r.Group("/backend/followings")
+	auth_followings := r.Group("/backend/followings")
+	auth_followings.Use(middleware.AuthMiddleware())
 	{
 		followings.GET("", followingHandler.GetFollowings)
 		followings.GET("/user/:id", followingHandler.GetFollowingsByUserId)
-		followings.POST("", followingHandler.CreateFollowing)
-		followings.DELETE("", followingHandler.DeleteFollowing)
+		auth_followings.POST("", followingHandler.CreateFollowing)
+		auth_followings.DELETE("", followingHandler.DeleteFollowing)
 	}
 
 	health := r.Group("/backend/health")
